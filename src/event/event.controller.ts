@@ -4,8 +4,8 @@ import {
   Delete,
   Get,
   Param,
-  Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 
 import { CreateEventDto } from './dto/create-event.dto';
@@ -35,16 +35,16 @@ export class EventController {
     return this.eventService.createEvent(createEventDto);
   }
 
-  @Delete('/:id')
-  deleteTask(@Param('id') id: string): Promise<void> {
-    return this.eventService.deleteEvent(id);
-  }
-
-  @Patch('/:id/status')
+  @Put('/:id')
   updateEvent(
     @Param('id') id: string,
     @Body() updateEventDto: UpdateEventDto,
   ): Promise<EventEntity> {
     return this.eventService.updateEvent(id, updateEventDto);
+  }
+
+  @Delete('/:id')
+  deleteTask(@Param('id') id: string): Promise<void> {
+    return this.eventService.deleteEvent(id);
   }
 }

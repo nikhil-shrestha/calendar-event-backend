@@ -26,6 +26,7 @@ export class EventService {
   }
 
   async getEventById(id: string): Promise<EventEntity> {
+    this.logger.log(`Fetching event with ID "${id}"`);
     return this.eventRepository
       .createQueryBuilder()
       .select('event')
@@ -81,12 +82,14 @@ export class EventService {
       throw new NotFoundException(`Event with ID "${id}" not found`);
     }
 
+    this.logger.log(`Updating event with ID "${id}"`);
+
     const { title, description, startDateTime, endDateTime, participants } =
       updateEventDto;
 
     const updated = await this.eventRepository
       .createQueryBuilder()
-      .update(Event)
+      .update(EventEntity)
       .set({
         title,
         description,

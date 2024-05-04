@@ -26,24 +26,50 @@ export class NotificationService {
 
     this.logger.log(`Found ${events.length} events to notify`);
 
-    events.forEach((event) => {
+    for (const event of events) {
       // Logic to send notification (e.g., send email, trigger browser notification)
-      this.sendNotification(event);
-    });
+      await this.sendNotification(event);
+    }
   }
 
   async sendNotification(event: EventEntity) {
     // Implementation of notification sending logic
-    console.log('Sending notification for event: ', event);
+    this.logger.log('Sending notification for event: ', event);
 
     const mail = {
-      to: event.participants,
-      subject: 'Hello from sendgrid',
-      from: 'hello@test.com', // Fill it with your validated email on SendGrid account
+      to: event?.participants || ['nikhil.shrestha1995@gmail.com'],
+      subject: 'Hello from Calendar App',
+      from: 'nikhil.shrestha1995@gmail.com', // Fill it with your validated email on SendGrid account
       text: 'Hello',
-      html: '<h1>Hello</h1>',
+      html: `<h1>Hello</h1><p>This is a test notification.</p><br/><br/><table><tr><th align="left">Title</th><td>${event?.title}</td></tr><tr><th align="left">Start Date</th><td>${new Date(event?.startDateTime)}</td></tr></table>`,
     };
 
-    return await this.sendgridService.send(mail);
+    try {
+      await this.sendgridService.send(mail);
+      this.logger.log('Notification sent successfully.');
+    } catch (error) {
+      this.logger.error('Error sending notification:', error);
+      // Handle error (e.g., log, retry, etc.)
+    }
+  }
+
+  async testNotification() {
+    const mail = {
+      to: 'nikhil.shrestha1995@gmail.com',
+      subject: 'Hello from sendgrid',
+      from: 'nikhil.shrestha1995@gmail.com', // Fill it with your validated email on SendGrid account
+      text: 'Hello',
+      html: '<h1>Hello</h1><p>This is a test notification.</p><br/><br/><table><tr><th align="left">Title</th><td>Test</td></tr><tr><th align="left">Start Date</th><td>12323123</td></tr></table>',
+    };
+
+    // try {
+    //   await this.sendgridService.send(mail);
+    //   this.logger.log('Notification sent successfully.');
+    // } catch (error) {
+    //   this.logger.error('Error sending notification:', error.message);
+    //   // Handle error (e.g., log, retry, etc.)
+    // }
+
+    return this.sendgridService.send(mail);
   }
 }

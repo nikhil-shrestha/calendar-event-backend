@@ -1,15 +1,21 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GetFilterDto } from './dto/get-filter.dto';
 import axios from 'axios';
 
 @Injectable()
 export class HolidayService {
+  private readonly logger = new Logger(HolidayService.name);
+
   constructor(private configService: ConfigService) {}
 
   async getHolidays(filterDto: GetFilterDto) {
     const { country, year } = filterDto;
-    console.log('country', country);
+    this.logger.log('country', country);
     const apiKey = this.configService.get('HOLIDAY_API_KEY');
     const url = `${this.configService.get('HOLIDAY_API_URL')}/holidays?pretty&key=${apiKey}&country=${country}&year=${year}`;
 
@@ -17,7 +23,7 @@ export class HolidayService {
       const response = await axios.get(url);
       return response.data.holidays;
     } catch (err) {
-      console.log('Error: ', err.message);
+      this.logger.error('Error: ', err.message);
       throw new InternalServerErrorException(
         'Something went wrong, Try again!',
       );
@@ -32,7 +38,7 @@ export class HolidayService {
       const response = await axios.get(url);
       return response.data.countries;
     } catch (err) {
-      console.log('Error: ', err.message);
+      this.logger.error('Error: ', err.message);
       throw new InternalServerErrorException(
         'Something went wrong, Try again!',
       );

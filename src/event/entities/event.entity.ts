@@ -28,7 +28,6 @@ export class EventEntity extends BaseEntity {
   endDateTime: Date;
 
   @Column('simple-array', { nullable: true })
-  @Exclude({ toPlainOnly: true })
   participants: string[];
 
   @CreateDateColumn({
